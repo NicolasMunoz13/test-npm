@@ -1,5 +1,7 @@
 version: 2.1
 
+orbs:
+  sonarcloud: sonarsource/sonarcloud@2.0.0  #Orb para el uso de sonarclouden circleci
 
 jobs:
   test:
@@ -28,10 +30,15 @@ jobs:
           command: npm run test:coverage
       - store_test_results: #Para subir los resultados en formato xml
           path: test-results.xml
+      - sonarcloud/scan
 
 workflows:
   test-wf:
     jobs:
       - test
+          context: sonarCloud #se llama el contexto creado en los settings de circleci
 
-
+#Los contextos se usan para guardar secretos en circleci para guardas tokens
+#El contexto se agrega desde los settings de la organizacon agregando como variable de ambiente
+#Los contextos se añaden a nivel de workflow
+#Se debe agregar un archivo soner-project.properties para configurar los test coverage en circleci
