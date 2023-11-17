@@ -63,6 +63,9 @@ workflows:
     jobs:
       - test:
           context: sonarCloud #se llama el contexto creado en los settings de circleci y para leer los secretos en el cotext
+          filters:
+            tags:
+              only: /^v.*/
       - deploy:
           context: sonarCloud
           requires:
@@ -77,5 +80,4 @@ workflows:
 #El contexto se agrega desde los settings de la organizacon agregando como variable de ambiente
 #Los contextos se añaden a nivel de workflow
 #Se debe agregar un archivo soner-project.properties para configurar los test coverage en circleci
-
 #para el uso del tag, se agrega como git tag v1.1.0 y git push origin --tags
