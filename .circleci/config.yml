@@ -8,9 +8,18 @@ jobs:
       - image: cimg/node:20.5.1
     steps:
       - checkout
+
+      - restore_cache: #Para restaurar las dependencias
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
       - run: 
           name: Install dependencies #Es buena practica agregar el nombre del run
           command: npm install
+      
+      - save_cache: #Guarda las dependencias para que el siguiente deploy sea mas rapido la instalación
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
       - run:
           name: Run Lint
           command: npm run lint
