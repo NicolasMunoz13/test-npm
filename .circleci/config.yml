@@ -35,7 +35,7 @@ jobs:
 workflows:
   test-wf:
     jobs:
-      - test
+      - test:
           context: sonarCloud #se llama el contexto creado en los settings de circleci
 
 #Los contextos se usan para guardar secretos en circleci para guardas tokens
