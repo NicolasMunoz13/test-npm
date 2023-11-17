@@ -67,6 +67,11 @@ workflows:
           context: sonarCloud
           requires:
             - test
+          filters: #Se usan los filtros cuando se crea una etiqueta para que el deploy se ejecute solo en ese caso
+            tags:
+              only: /^v.*/ #Se va a ejecutar en las etiquetas que inicien por v
+            branches:
+              ignore: /.*/ #Se va a ignorar en todos los branches
 
 #Los contextos se usan para guardar secretos en circleci para guardas tokens
 #El contexto se agrega desde los settings de la organizacon agregando como variable de ambiente
