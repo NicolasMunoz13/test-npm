@@ -31,12 +31,42 @@ jobs:
       - store_test_results: #Para subir los resultados en formato xml
           path: test-results.xml
       - sonarcloud/scan
+      - persist_to_workspace: #Permite que todo lo que se ejecuto en test no se pierda y se pueda usar en el siguiente job
+            root: ~/repo
+            paths: .
+  deploy:
+    working_directory: ~/repo
+    docker:
+      - image: cimg/node:20.5.1
+    steps:
+      - attach_workspace: #Trayendo la informacion del job anterior persistida
+          at: ~/repo
+      - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/repo/.npmrc #Para mostrar el token con registro para la publicacion del npm
+      - run:
+          name: Pack package
+          command: npm pack #Se busca empaquetar el .tgz
+      - run:
+          name: Publis package
+          command: npm publish --dry-run #Para la publicacion del paquete npm con el .tgz
+      - store_artifacts: #Para guardar los artifacts
+          path: ~/repo/dist
+          destination: dist
+      - store_artifacts:
+          path: ~/repo/docs
+          destinantion: docs
+
 
 workflows:
-  test-wf:
+  test-deploy:
     jobs:
       - test:
-          context: sonarCloud #se llama el contexto creado en los settings de circleci
+          context: sonarCloud #se llama el contexto creado en los settings de circleci y para leer los secretos en el cotext
+      - deploy:
+          context: sonarCloud
+          requires:
+            - test
 
 #Los contextos se usan para guardar secretos en circleci para guardas tokens
 #El contexto se agrega desde los settings de la organizacon agregando como variable de ambiente
